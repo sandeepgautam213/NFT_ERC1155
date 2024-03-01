@@ -12,8 +12,11 @@ import { BrowserProvider } from "ethers";
 import { NFT__factory, NFT } from "../../typechain-types";
 import { BaseContract } from "ethers";
 
+// Main component
+
 
 export default function Home() {
+   // State variables
   const [account, setAccount] = useState<string>("");
   const [contract, setContract] = useState< NFT | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -25,10 +28,11 @@ export default function Home() {
   const [burnPrice, setBurnPrice] = useState<string>("0");
 
   const contractAddress = "0x210a37E01089d1160A9af5D32bDFAc7348FB99e6";
-
+        // useEffect hook to set connection from local storage
   useEffect(() => {
     setConnect(localStorage.getItem("address") || "");
   }, []);
+  // useEffect hook to handle account changes
 
   useEffect(() => {
     const provider = new BrowserProvider(window.ethereum);
@@ -53,6 +57,7 @@ export default function Home() {
       }
     });
   }, []);
+  // useEffect hook to initialize contract and fetch data
 
   useEffect(() => {
     const setContractVal = async () => {
@@ -74,9 +79,12 @@ export default function Home() {
         toast(errorMessage);
       }
     };
+    
 
     setContractVal();
   }, [connect]);
+  
+  // Function to connect wallet
 
   const connectWallet = async () => {
     try {
@@ -101,6 +109,7 @@ export default function Home() {
       toast(errorMessage);
     }
   };
+    // Function to mint NFT
 
   const mintNFT = async () => {
     const provider = new BrowserProvider(window.ethereum);
@@ -128,6 +137,7 @@ export default function Home() {
     }
     setLoading(false);
   };
+  // Function to burn NFT
 
   const burn = async () => {
     try {
