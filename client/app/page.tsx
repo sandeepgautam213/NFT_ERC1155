@@ -21,7 +21,7 @@ export default function Home() {
   const [connect, setConnect] = useState<string>("");
 
   const [mintPrice, setMintPrice] = useState<string>("0");
-  const [totalSupply, setTotalSupply] = useState<number>(0);
+  //const [totalSupply, setTotalSupply] = useState<number>(0);
   const [burnPrice, setBurnPrice] = useState<string>("0");
 
   const contractAddress = "0x210a37E01089d1160A9af5D32bDFAc7348FB99e6";
