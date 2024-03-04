@@ -1,44 +1,46 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ethers } from "ethers";
+import { ethers, BaseContract , BrowserProvider } from "ethers";
 import styles from "./page.module.css"
 import NFT1 from "../../artifacts/contracts/NFT.sol/NFT.json";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
 import nftImage from "./assets/images/nft.jpg";
-import NFT2 from "./components/nft";
-import { BrowserProvider } from "ethers";
-import { NFT__factory, NFT } from "../../typechain-types";
-import { BaseContract } from "ethers";
+import {NFT} from "../../typechain-types";
+
+
+
 
 
 export default function Home() {
   const [account, setAccount] = useState<string>("");
+  const [signer , setSigner]  = useState<ethers.JsonRpcSigner>();
   const [contract, setContract] = useState< NFT | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [burnloading, setBurnloading] = useState<boolean>(false);
   const [connect, setConnect] = useState<string>("");
 
   const [mintPrice, setMintPrice] = useState<string>("0");
-  //const [totalSupply, setTotalSupply] = useState<number>(0);
+
   const [burnPrice, setBurnPrice] = useState<string>("0");
 
   const contractAddress = "0x210a37E01089d1160A9af5D32bDFAc7348FB99e6";
 
   useEffect(() => {
-    setConnect(localStorage.getItem("address") || "");
+    setConnect(localStorage.getItem("address") ?? "");
   }, []);
 
   useEffect(() => {
     const provider = new BrowserProvider(window.ethereum);
     window.ethereum.on("accountsChanged", async () => {
       try {
-        const signer = await provider.getSigner();
-        const address = await signer.getAddress();
+        const Signer = await provider.getSigner();
+        const address = await Signer.getAddress();
         setAccount(address);
+        setSigner(Signer);
         localStorage.setItem("address", address);
-        setConnect(localStorage.getItem("address") || "");
+        setConnect(localStorage.getItem("address") ?? "");
       } catch (error) {
         const err = error as Error;
         const accounts = await provider.listAccounts();
@@ -57,15 +59,15 @@ export default function Home() {
   useEffect(() => {
     const setContractVal = async () => {
       try {
-        const provider = new BrowserProvider(window.ethereum);
-        const signer = await provider.getSigner();
+       
+        
         const contract = new   ethers.Contract(contractAddress, NFT1.abi, signer) as BaseContract as NFT;
 
-        const NFT_Contract = NFT__factory.connect(contractAddress, provider);
+       
         setContract(contract);
         const mintPrice = await contract.mintPrice();
         setMintPrice(ethers.formatEther(mintPrice));
-        setBurnPrice(localStorage.getItem("burnPrice") || "0");
+        setBurnPrice(localStorage.getItem("burnPrice") ?? "0");
 
      
       } catch (error) {
@@ -84,15 +86,14 @@ export default function Home() {
       if (!connect) {
         const accounts = await provider.send("eth_requestAccounts", []);
         if (accounts) {
-          const signer = await provider.getSigner();
-          const address = await signer.getAddress();
-          setAccount(address);
-          localStorage.setItem("address", address);
+         
+         
+          localStorage.setItem("address", account);
           const contract = new ethers.Contract(contractAddress, NFT1.abi, signer) as BaseContract as NFT;
-          //const NFT_Contract = NFT__factory.connect(contractAddress, provider); 
+          
           setContract(contract);
-         // setContract(contract);
-          setConnect(localStorage.getItem("address") || "");
+         
+          setConnect(localStorage.getItem("address") ?? "");
         }
       }
     } catch (error) {
@@ -111,7 +112,7 @@ export default function Home() {
         params: [{ chainId: "0xAA36A7" }],
       });
     }
-    const tokenURI : string = "ipfs://bafkreid5vbbsi4yy3girvkozlkprqkzz3qobpwbiyaw4ethxy7voyvmg6y";
+   
     setLoading(true);
     try {
       const mintPrice = await contract?.mintPrice();
