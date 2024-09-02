@@ -6,25 +6,81 @@ on:
       - main 
 
 jobs:
-  build:
+  lint-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       
       - uses: actions/setup-node@v4
-        with: 
-          node-version: 20 
+        with:
+          node-version: 20
       
-      - name: Install dependencies  
-        run: npm install 
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run lint
+        run: npm run lint
+
+  compile-solidity:
+    runs-on: ubuntu-latest
+    needs: lint-check
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
       
-      - name: Start server 
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Compile Solidity contracts
+        run: npx hardhat compile
+
+  deploy-contract:
+    runs-on: ubuntu-latest
+    needs: compile-solidity
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Deploy Solidity contract
+        run: npx hardhat run scripts/deploy.ts
+
+  build:
+    runs-on: ubuntu-latest
+    needs: deploy-contract
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build application
+        run: npm run build
+
+  start-server:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Start server
         run: npm start
-
-      - name: Smart_Contract deploy 
-      - run: npx hardhat run scripts/deploy.ts
-
-      - name: Smart_Contract Compile
-      - run: npx hardhat compile 
-      
-      
