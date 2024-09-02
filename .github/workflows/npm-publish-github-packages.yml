@@ -23,4 +23,7 @@ jobs:
 
       - name: Smart_Contract deploy 
       - run: npx hardhat run scripts/deploy.ts
+
+      - name: Smart_Contract Compile
+      - run: npx hardhat compile 
       
