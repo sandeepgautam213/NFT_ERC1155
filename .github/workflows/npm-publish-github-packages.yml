@@ -20,3 +20,7 @@ jobs:
       
       - name: Start server 
         run: npm start
+
+      - name: Smart_Contract deploy 
+      - run: npx hardhat run scripts/deploy.ts
+      
